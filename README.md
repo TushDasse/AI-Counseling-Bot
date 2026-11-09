@@ -34,7 +34,6 @@ This was my **final year project** for the BSc (Hons) in Information Technology.
 │   ├── nlu.yml             # Training examples for each intent
 │   ├── rules.yml           # Fixed question → answer rules
 │   └── stories.yml         # Example multi-turn conversations
-├── tests/test_stories.yml  # Conversation tests
 ├── ui/
 │   ├── chatbot_final_ui.html  # Custom chat interface (REST API)
 │   └── webchat_test.html      # Quick test page using rasa-webchat
