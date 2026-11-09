@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OUSL Counseling Bot</title>
+    <style>
+        body { font-family: sans-serif; }
+    </style>
+</head>
+<body>
+    <h1>OUSL AI Counseling Bot</h1>
+    <p>This is a test page for your Rasa chatbot.</p>
+
+    <div id="rasa-webchat"></div>
+
+    <script src="https://unpkg.com/rasa-webchat@1.0.1/lib/index.js"></script>
+
+    <script>
+      WebChat.default.init({
+        selector: "#rasa-webchat",
+        initPayload: "/greet", // Sends a '/greet' message to the bot when the chat opens
+        socketUrl: "http://localhost:5005", // The address of your Rasa server
+        socketPath: "/socket.io/",
+        title: "OUSL Counseling Bot",
+        subtitle: "Ask me about the IT Degree",
+      })
+    </script>
+
+</body>
+</html>

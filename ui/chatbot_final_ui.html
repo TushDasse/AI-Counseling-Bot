@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OUSL AI Counseling Bot (Updated)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* General Setup */
+        :root {
+            --ousl-blue: #007bff;
+            --bot-bg: #f8f9fa;
+            --user-msg-bg: #dcf8c6;
+            --bot-msg-bg: #e2e6ea;
+            --border-color: #dee2e6;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* --- 1. Floating Toggle Button --- */
+        .chat-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--ousl-blue);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 24px;
+            z-index: 1000;
+        }
+
+        /* --- 2. Main Chat Widget Container (Size Fix) --- */
+        .chat-widget-container {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            /* UPDATED: Increased size for better web usability */
+            width: 420px;
+            height: 550px; 
+            
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 999;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        .hidden {
+            transform: translateY(10px) scale(0.9);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* --- Chat Header --- */
+        .chat-header {
+            background-color: var(--ousl-blue);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0; 
+        }
+
+        .bot-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .bot-info i {
+            margin-right: 10px;
+        }
+
+        .header-controls button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+            padding: 5px;
+        }
+
+        .lang-toggle {
+            font-weight: bold;
+            border: 1px solid white !important;
+            border-radius: 4px;
+            padding: 3px 6px !important;
+        }
+
+        /* --- Chat Body and Welcome --- */
+        .chat-body {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: var(--bot-bg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .welcome-message {
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            flex-shrink: 0;
+        }
+
+        .welcome-message .deadline {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* Quick Actions (Suggestions) */
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+            transition: all 0.3s ease-out; 
+            max-height: 100px; /* Limit height when visible */
+            overflow: hidden;
+        }
+        
+        /* UPDATED: Class to hide quick actions once conversation starts */
+        .quick-actions.hidden-actions {
+            max-height: 0; 
+            opacity: 0;
+            margin-bottom: 0;
+            padding: 0;
+        }
+
+        .quick-action-btn {
+            background-color: white;
+            color: var(--ousl-blue);
+            border: 1px solid var(--ousl-blue);
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: background-color 0.2s;
+        }
+
+        .quick-action-btn:hover {
+            background-color: var(--ousl-blue);
+            color: white;
+        }
+
+        /* Message History */
+        .message-history {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background-color: var(--user-msg-bg);
+            border-bottom-right-radius: 2px;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background-color: var(--bot-msg-bg);
+            border-bottom-left-radius: 2px;
+        }
+
+        /* --- Chat Input Footer --- */
+        .chat-footer {
+            padding: 10px 15px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            background-color: white;
+            flex-shrink: 0;
+        }
+
+        .chat-footer input {
+            flex-grow: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 1em;
+            margin-right: 10px;
+        }
+
+        .chat-footer input:focus {
+            outline: none;
+            border-color: var(--ousl-blue);
+        }
+
+        .send-btn {
+            background-color: var(--ousl-blue);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .send-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 400px) {
+            .chat-widget-container {
+                width: 100%;
+                height: 100%;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+            }
+            .chat-toggle-btn {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="chat-toggle-btn" class="chat-toggle-btn">
+        <i class="fas fa-robot"></i>
+    </div>
+
+    <div id="chat-widget" class="chat-widget-container hidden">
+        
+        <header class="chat-header">
+            <div class="bot-info">
+                <i class="fas fa-graduation-cap"></i>
+                <span>OUSL Counseling Bot</span>
+            </div>
+            <div class="header-controls">
+                <button id="lang-toggle" class="lang-toggle">EN</button>
+                <button id="referral-btn" class="referral-btn" title="Contact Human Counselor">
+                    <i class="fas fa-headset"></i>
+                </button>
+                <button id="close-btn" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="chat-body">
+            <div class="welcome-message">
+                <h4>Welcome to OUSL Support!</h4>
+            </div>
+            
+            <div id="quick-actions" class="quick-actions">
+                <button class="quick-action-btn" data-query="check_fees">Check Fees</button>
+                <button class="quick-action-btn" data-query="exam_schedule">Exam Schedule</button>
+                <button class="quick-action-btn" data-query="degree_plan">Degree Plan</button>
+                <button class="quick-action-btn" data-query="study_tips">Need Study Tips</button>
+            </div>
+
+            <div id="message-history" class="message-history">
+                <div class="message bot-message">
+                    I'm your 24/7 AI guide for Academic, Administrative, and Well-being support. Start by asking a question or clicking a quick action button!
+                </div>
+            </div>
+        </main>
+
+        <footer class="chat-footer">
+            <input type="text" id="user-input" placeholder="Type your message..." autofocus>
+            <button id="send-btn" class="send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatWidget = document.getElementById('chat-widget');
+            const chatToggleBtn = document.getElementById('chat-toggle-btn');
+            const closeBtn = document.getElementById('close-btn');
+            const sendBtn = document.getElementById('send-btn');
+            const userInput = document.getElementById('user-input');
+            const messageHistory = document.getElementById('message-history');
+            const quickActionsContainer = document.getElementById('quick-actions');
+            const quickActionBtns = document.querySelectorAll('.quick-action-btn');
+            const langToggleBtn = document.getElementById('lang-toggle');
+            const referralBtn = document.getElementById('referral-btn');
+
+            const RASA_API_URL = 'http://localhost:5005/webhooks/rest/webhook'; 
+            const SENDER_ID = 'web_user'; 
+            
+            let conversationStarted = false; 
+
+            // --- UI Toggle Functionality ---
+            chatToggleBtn.addEventListener('click', () => {
+                chatWidget.classList.toggle('hidden');
+                if (!chatWidget.classList.contains('hidden')) {
+                    userInput.focus();
+                    scrollToBottom();
+                }
+            });
+
+            closeBtn.addEventListener('click', () => {
+                chatWidget.classList.add('hidden');
+            });
+
+            // --- Message Management Functions ---
+            const addMessage = (text, isUser = true) => {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+                
+                messageDiv.innerHTML = text; 
+                
+                messageHistory.appendChild(messageDiv);
+                scrollToBottom();
+            };
+
+            const scrollToBottom = () => {
+                messageHistory.scrollTop = messageHistory.scrollHeight;
+            };
+
+            const startConversation = () => {
+                if (!conversationStarted) {
+                    conversationStarted = true;
+                    // UPDATED: Hide the quick actions container
+                    quickActionsContainer.classList.add('hidden-actions');
+                }
+            };
+
+            // --- Chat Submission Logic (Rasa Integration) ---
+            const sendMessage = (queryText) => {
+                const message = queryText.trim();
+                if (message === '') return;
+
+                addMessage(message, true);
+                userInput.value = '';
+                startConversation(); 
+
+                // 1. Prepare data payload
+                const data = {
+                    sender: SENDER_ID,
+                    message: message 
+                };
+
+                // 2. Send request to Rasa Core API
+                fetch(RASA_API_URL, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Rasa API request failed: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(messages => {
+                    // 3. Process Rasa's response array
+                    messages.forEach(msg => {
+                        if (msg.text) {
+                            addMessage(msg.text, false); // Display the bot's response
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('Error communicating with Rasa:', error);
+                    addMessage('Sorry, I cannot connect to the main OUSL support system right now. Please check the network connection.', false);
+                });
+            };
+
+            // Send button click
+            sendBtn.addEventListener('click', () => {
+                sendMessage(userInput.value);
+            });
+
+            // Enter key press
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage(userInput.value);
+                }
+            });
+
+            // --- Quick Action Buttons Logic ---
+            quickActionBtns.forEach(button => {
+                button.addEventListener('click', () => {
+                    const text = button.textContent; 
+                    sendMessage(text);
+                });
+            });
+
+            // --- Multilingual Toggle Logic (Placeholder) ---
+            let currentLang = 'EN';
+            langToggleBtn.addEventListener('click', () => {
+                if (currentLang === 'EN') {
+                    currentLang = 'SI';
+                    langToggleBtn.textContent = 'SI';
+                    alert('Language switched to Sinhala (SI). In the full project, the UI and Rasa NLU model would load for this language.');
+                } else {
+                    currentLang = 'EN';
+                    langToggleBtn.textContent = 'EN';
+                    alert('Language switched to English (EN).');
+                }
+            });
+
+            // --- Referral Button Logic (Placeholder) ---
+            referralBtn.addEventListener('click', () => {
+                const referralMsg = "Thank you for reaching out. Please click here to open the **confidential OUSL Student Support portal** and schedule a session with a human counselor (Appendix F mitigation strategy).";
+                addMessage(referralMsg, false);
+            });
+        });
+    </script>
+</body>
+</html>
