@@ -1,0 +1,40 @@
+# data/stories.yml
+version: "3.1"
+
+stories:
+
+# Path 1: Polite User (Greets first)
+- story: User greets and asks for fees
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: ask_fees
+  - action: utter_ask_fees
+  - intent: goodbye
+  - action: utter_goodbye
+
+# Path 2: Direct User 
+- story: User asks about fees directly
+  steps:
+  - intent: ask_fees
+  - action: utter_ask_fees
+  - intent: ask_degree_duration
+  - action: utter_ask_degree_duration
+
+# Path 3: Direct Course Inquiry
+- story: User asks for course details directly
+  steps:
+  - intent: ask_course_details
+  - action: action_give_course_details
+  - intent: ask_admission_requirements
+  - action: utter_ask_admission_requirements
+
+# Path 4: Context Switching (Jumping between topics)
+- story: Mixed interaction
+  steps:
+  - intent: ask_admission_requirements
+  - action: utter_ask_admission_requirements
+  - intent: ask_fees
+  - action: utter_ask_fees
+  - intent: ask_contact_info
+  - action: utter_ask_contact_info

@@ -1,0 +1,245 @@
+# FILE: data/nlu.yml
+version: "3.1"
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - hey bot
+    - greetings
+    - ayubowan
+    - yo
+
+- intent: goodbye
+  examples: |
+    - bye
+    - goodbye
+    - see you later
+    - see ya
+    - i have to go
+    - ending chat
+    - stop
+    - cya
+
+- intent: ask_fees  # General queries only
+  examples: |
+    - How much are the fees?
+    - What is the cost of the IT degree?
+    - tell me about the tuition fees
+    - is the course expensive?
+    - give me the price breakdown
+    - course fee structure
+    - total cost of the degree
+    - credit price
+    - price of a credit
+    - cost per credit
+    - how much is one credit
+    - credit fee
+    - 3010 per credit
+
+- intent: ask_first_installment  # Specific queries for Payment 1
+  examples: |
+    - how much is the first installment?
+    - what do I pay at registration?
+    - tell me about the initial payment
+    - how much is voucher 1?
+    - first payment details
+    - what is the 60% payment?
+    - payment due at start
+
+- intent: ask_second_installment  # Specific queries for Payment 2
+  examples: |
+    - how much is the second installment?
+    - when is the second payment due?
+    - tell me about the 40% payment
+    - what is the next payment after registration?
+    - details of the second voucher
+    - do I pay lab fees in the second installment?
+    
+- intent: ask_course_details
+  examples: |
+    - what is in the [COU3300](course_code) course?
+    - tell me more about [ITU3201](course_code)
+    - give me details on [COU4300](course_code)
+    - [COU3301](course_code)
+    - describe [Software Engineering](course_name)
+    - what will I learn in [Web Technologies](course_name)?
+    - content of [COU5300](course_code)
+
+- intent: ask_course_list_by_level
+  examples: |
+    - [Level 3](level_number)
+    - [Level 4](level_number)
+    - [Level 5](level_number)
+    - [Level 6](level_number)
+    - what are the [level 3](level_number) courses?
+    - subjects for [level 6](level_number)
+    - show me [level 5](level_number)
+    - tell me about level [4](level_number)
+    # --- ADD THESE NEW LINES ---
+    - [3](level_number)
+    - [4](level_number)
+    - [5](level_number)
+    - [6](level_number)
+
+- intent: ask_registration_status
+  examples: |
+    - check registration status for student [123456789](student_id)
+    - is [123456789](student_id) registered for [itu3201](module_code)?
+    - am I registered for [cou3300](module_code)? my id is [123456789](student_id)
+    - check status of [ITU3201](module_code) for [987654321](student_id)
+    - verify registration for [123456789](student_id)
+
+- intent: ask_admission_requirements
+  examples: |
+    - What are the admission requirements?
+    - How can I join the program?
+    - do I need A/Ls to enter?
+    - entry criteria for BSc IT
+    - am I eligible to apply?
+    - qualifications needed for the degree
+    - admission process details
+
+- intent: ask_degree_duration
+  examples: |
+    - How long is the degree?
+    - duration of the program
+    - when will I graduate?
+    - minimum time to complete
+    - maximum years allowed
+    - is it a 3 year or 4 year degree?
+
+- intent: ask_exemptions
+  examples: |
+    - Can I get exemptions?
+    - I have a diploma, can I skip courses?
+    - credit transfer policy
+    - how to apply for exemptions
+    - exemption for HND holders
+
+- intent: ask_contact_info
+  examples: |
+    - give me the phone number
+    - contact email for coordinator
+    - who do I call for help?
+    - address of the department
+    - dean's contact details
+    
+- intent: ask_exam_schedule
+  examples: |
+    - when are the exams?
+    - exam dates
+    - date of the final exam
+    - exam time table
+    - when do we have exams
+    - tell me the exam schedule
+    - are the exam dates released?
+
+# TS_03: Drop Policy
+- intent: ask_drop_policy
+  examples: |
+    - I want to drop a course
+    - how do i cancel a subject?
+    - drop policy
+    - can I get a refund if I drop?
+    - withdrawal from course
+    - dropping [COU3300](course_code)
+
+# TS_04: Emotional Distress (Safety Layer)
+- intent: mood_unhappy
+  examples: |
+    - I feel completely overwhelmed
+    - I want to quit
+    - this is too hard for me
+    - I am stressed out
+    - i feel depressed
+    - i can't handle the pressure
+    - i am failing everything
+
+# TS_05: Ambiguous Assignment Queries
+- intent: ask_assignment
+  examples: |
+    - I need help with the assignment
+    - when is the assignment due?
+    - assignment details
+    - submission date for assignment
+# General intent (User doesn't say the level)
+- intent: ask_courses_general
+  examples: |
+    - what are the courses?
+    - tell me the subjects
+    - list of modules
+    - show me the curriculum
+    - what do I study?
+    - course list
+    - show me all subjects
+
+# Specific intent (User says the level) 
+- intent: ask_course_list_by_level
+  examples: |
+    - [Level 3](level_number)
+    - [Level 4](level_number)
+    - [Level 5](level_number)
+    - [Level 6](level_number)
+    - what are the [level 3](level_number) courses?
+    - subjects for [level 4](level_number)
+    - show me [level 5](level_number)
+
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+
+- intent: goodbye
+  examples: |
+    - bye
+    - goodbye
+
+# --- Course Request ---
+- intent: ask_courses_general
+  examples: |
+    - what are the courses?
+    - show me the subjects
+    - list of modules
+    - curriculum details
+    - what do I study?
+
+# --- Specific Level Request ---
+- intent: ask_course_list_by_level
+  examples: |
+    - [Level 3](level_number)
+    - [Level 4](level_number)
+    - [Level 5](level_number)
+    - what are the [level 3](level_number) courses?
+    - subjects for [level 6](level_number)
+
+- intent: ask_fees
+  examples: |
+    - how much are fees?
+    - cost of degree
+    - tuition fees
+
+- intent: ask_first_installment
+  examples: |
+    - how much is the first payment?
+    - initial voucher amount
+
+- intent: ask_second_installment
+  examples: |
+    - second payment details
+    - when is the next installment?
+
+- intent: ask_exam_schedule
+  examples: |
+    - when are exams?
+    - exam dates
+
+- intent: ask_registration_status
+  examples: |
+    - am I registered?
+    - check status

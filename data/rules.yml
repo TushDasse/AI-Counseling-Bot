@@ -1,0 +1,139 @@
+version: "3.1"
+
+rules:
+# --- BASIC CHIT-CHAT ---
+- rule: Greet the user
+  steps:
+  - intent: greet
+  - action: utter_greet
+
+- rule: Say goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+
+# --- TEST CASE 01: EXAM SCHEDULE (Specific & General) ---
+- rule: Check exam date
+  steps:
+  - intent: ask_exam_schedule
+  - action: action_check_exam_date
+
+# --- TEST CASE 02: FEE STRUCTURE (Granular) ---
+- rule: Answer general fee question
+  steps:
+  - intent: ask_fees
+  - action: utter_ask_fees
+
+- rule: Answer first installment question
+  steps:
+  - intent: ask_first_installment
+  - action: utter_ask_first_installment
+
+- rule: Answer second installment question
+  steps:
+  - intent: ask_second_installment
+  - action: utter_ask_second_installment
+
+# --- TEST CASE 03: DROP POLICY ---
+- rule: Explain drop policy
+  steps:
+  - intent: ask_drop_policy
+  - action: utter_ask_drop_policy
+
+# --- TEST CASE 04: SAFETY / EMPATHY ---
+- rule: Handle negative sentiment
+  steps:
+  - intent: mood_unhappy
+  - action: utter_mood_unhappy
+
+# --- TEST CASE 05: AMBIGUITY HANDLING ---
+- rule: Ask for clarification on assignments
+  steps:
+  - intent: ask_assignment
+  - action: utter_ask_assignment_clarification
+
+# --- GENERAL FAQs (One-Shot Answers) ---
+- rule: Answer admission requirements
+  steps:
+  - intent: ask_admission_requirements
+  - action: utter_ask_admission_requirements
+
+- rule: Answer degree duration
+  steps:
+  - intent: ask_degree_duration
+  - action: utter_ask_degree_duration
+
+- rule: Answer about exemptions
+  steps:
+  - intent: ask_exemptions
+  - action: utter_ask_exemptions
+
+- rule: Answer pre-academic courses
+  steps:
+  - intent: ask_pre_academic_courses
+  - action: utter_ask_pre_academic_courses
+
+- rule: Answer student support
+  steps:
+  - intent: ask_student_support
+  - action: utter_ask_student_support
+
+- rule: Answer registration process
+  steps:
+  - intent: ask_registration_process
+  - action: utter_ask_registration_process
+
+- rule: Answer contact info
+  steps:
+  - intent: ask_contact_info
+  - action: utter_ask_contact_info
+
+- rule: Answer why OUSL
+  steps:
+  - intent: ask_why_ousl
+  - action: utter_ask_why_ousl
+
+- rule: Answer program calendar
+  steps:
+  - intent: ask_program_calendar
+  - action: utter_ask_program_calendar
+
+- rule: Answer regional centres
+  steps:
+  - intent: ask_regional_centres
+  - action: utter_ask_regional_centres
+
+# --- COMPLEX ACTIONS (Database Lookups) ---
+- rule: Handle requests for course lists by level
+  steps:
+  - intent: ask_course_list_by_level
+  - action: action_give_course_details
+
+- rule: Handle requests for specific course details
+  steps:
+  - intent: ask_course_details
+  - action: action_give_course_details
+
+- rule: Handle registration status checks
+  steps:
+  - intent: ask_registration_status
+  - action: action_check_registration_status
+
+# Rule 1: User asks generally -> Bot asks "Which level?"
+- rule: Ask for clarification on courses
+  steps:
+  - intent: ask_courses_general
+  - action: utter_ask_which_level
+
+# Rule 2: User specifies level -> Bot gives list (Action)
+- rule: Show course list when level is known
+  steps:
+  - intent: ask_course_list_by_level
+  - action: action_give_course_details
+
+# data/rules.yml
+
+- rule: Implementation of Two-Stage Fallback
+  steps:
+  - intent: nlu_fallback
+  - action: action_two_stage_fallback
